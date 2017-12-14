@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Result Presenting</title>
+	<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<h1>Result:</h1>
+    <form class="form-horizontal" role="form">
+	    <div class="form-group">
+		    <label for="precision" class="col-sm-2 control-label">Precision</label>
+		    <div class="col-sm-2">
+			    <textarea class="form-control" rows="1" id="precision">{{precision}}</textarea>
+		    </div>
+	    </div>
+	    <div class="form-group">
+            <label for="posright" class="col-sm-2 control-label">Positive Right</label>
+		    <div class="col-sm-2">
+			    <textarea class="form-control" rows="1" id="posright">{{posright}}</textarea>
+		    </div>
+		    <label for="poswrong" class="col-sm-2 control-label">Positive Wrong</label>
+		    <div class="col-sm-2">
+			    <textarea class="form-control" rows="1" id="poswrong">{{poswrong}}</textarea>
+		    </div>
+	    </div>
+        <div class="form-group">
+            <label for="negright" class="col-sm-2 control-label">Negative Right</label>
+		    <div class="col-sm-2">
+			    <textarea class="form-control" rows="1" id="negright">{{negright}}</textarea>
+		    </div>
+		    <label for="negwrong" class="col-sm-2 control-label">Negative Wrong</label>
+		    <div class="col-sm-2">
+			    <textarea class="form-control" rows="1" id="negwrong">{{negwrong}}</textarea>
+		    </div>
+	    </div>
+    </form>
+</body>
+</html>

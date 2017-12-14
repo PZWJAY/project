@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+	<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+		<div class="row clearfix">
+			<div class="col-md-12 column">
+				<div class="jumbotron">
+					<h1>
+						Genetic Algorithm!
+					</h1>
+					<p>
+						This is a present of Genetic Algorithm applied in Mircoblogging.
+					</p>
+				</div>
+				<nav class="navbar navbar-default navbar-inverse" role="navigation">
+					<div class="navbar-header">
+						 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button> <a class="navbar-brand" href="#">PZWJAY</a>
+					</div>
+				</nav>
+				<form role="form" action="/" method="post">
+	    			<div class="form-group">
+		    			<label >Input Text:</label>
+		    			<input type="text" class="form-control" name="text" value="{{txt}}">
+	    			</div>
+        			<button type="submit" class="btn btn-primary">Analyzing</button>
+    			</form>
+				<p>
+					<h3>Result:</h3>
+				</p>
+				<div class="form-group">
+            		<label for="table1" >Positive Weight:</label>
+					<textarea class="form-control" rows="1" id="table1">{{wpos}}</textarea>
+	   			 </div>
+				<div class="form-group">
+					<label for="table2" >Negative Weight:</label>
+					<textarea class="form-control" rows="1" id="table2">{{wneg}}</textarea>
+				</div>
+				<div class="form-group">
+		    		<label for="table3" >Class</label>
+					<textarea class="form-control" rows="1" id="table3">{{result}}</textarea>
+	    		</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
