@@ -14,7 +14,7 @@ import re
 #Change this when you are not using a Win64 environment:
 libFile = './nlpir/NLPIR64.dll'
 
-NUM = 300 #选择的特征数
+NUM = 1000 #选择的特征数
 
 dll =  CDLL(libFile)
 def loadFun(exportName, restype, argtypes):
@@ -288,6 +288,23 @@ def calIG(word_ls,word_dic1,word_dic2,num_pos,num_neg,Entropy,whole_file): #计�
 		word_ls[word] = InfoGain
 	return word_ls
 
+def saveFile(filename,src):
+	file = open(filename, 'w', encoding='UTF-8')
+	for rcd in src:
+		if isinstance(rcd,dict):
+			if len(rcd) == 0:
+				continue
+			for item in rcd:
+				file.write(item)
+				file.write(' ')
+				file.write(str(rcd[item]))
+				file.write(' ')
+			file.write('\n')
+		elif isinstance(rcd,str):
+			file.write(rcd)
+			file.write(' ')
+	file.close()
+
 #def Word_process(unprocess_path0,unprocess_path1):
 if __name__=="__main__":
 	stopwords = []
@@ -304,7 +321,7 @@ if __name__=="__main__":
 	fs.close()
 
 	#读取文本并对文本进行分词、去停用词、统计词频率
-	filePath = 'small.txt'
+	filePath = 'all.txt'
 	file = open(filePath,encoding='UTF-8')
 	lines = file.readlines()
 	num_pos = 0
@@ -344,7 +361,10 @@ if __name__=="__main__":
 			continue
 		for w in word:
 			word[w] = word[w] / len(word)
-		file_pos.append(word)
+		if var[0] == '0':
+			file_pos.append(word)
+		else:
+			file_neg.append(word)
 	file.close()
 	whole_file = num_pos + num_neg
 	#计算信息熵
@@ -372,6 +392,8 @@ if __name__=="__main__":
 		chac_neg.append(word_setneg[cnt][0])
 		cnt += 1
 
+	chac_set = set(chac_pos) | set(chac_neg)
+
 	tf_pos = []
 	for ps in file_pos:
 		dic = {}
@@ -387,4 +409,7 @@ if __name__=="__main__":
 			if c in chac_neg:
 				dic[c] = ng[c] * math.log((num_neg / (word_neg[c] + 1)), 2)
 		tf_neg.append(dic)
+	saveFile('posFile.txt',tf_pos)
+	saveFile('negFile.txt',tf_neg)
+	saveFile('chacSet.txt',chac_set)
 	#return NUM,chac_pos,chac_neg,tf_pos,tf_neg
