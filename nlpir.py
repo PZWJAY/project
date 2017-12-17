@@ -15,6 +15,7 @@ import re
 libFile = './nlpir/NLPIR64.dll'
 
 NUM = 1000 #选择的特征数
+FILE_SIZE = 10000
 
 dll =  CDLL(libFile)
 def loadFun(exportName, restype, argtypes):
@@ -327,6 +328,8 @@ if __name__=="__main__":
 	num_pos = 0
 	num_neg = 0
 	for line in lines:
+		if len(file_pos) >= FILE_SIZE and len(file_neg) >= FILE_SIZE:
+			break
 		word = {}
 		ln = set()
 		var = line.split(' ')
@@ -409,6 +412,8 @@ if __name__=="__main__":
 			if c in chac_neg:
 				dic[c] = ng[c] * math.log((num_neg / (word_neg[c] + 1)), 2)
 		tf_neg.append(dic)
+	print(len(tf_pos))
+	print(len(tf_neg))
 	saveFile('posFile.txt',tf_pos)
 	saveFile('negFile.txt',tf_neg)
 	saveFile('chacSet.txt',chac_set)
