@@ -23,6 +23,7 @@ def createDataFrame(filename,type,df): #filename:文件名，type:文件类型�
     return df
 
 if __name__=='__main__':
+    '''
     chacFile = open('chacSet.txt','r',encoding='UTF-8')
     chac = chacFile.read()
     chacFile.close()
@@ -32,12 +33,16 @@ if __name__=='__main__':
     df = createDataFrame('posFile.txt',0,df)
     df = createDataFrame('negFile.txt',1,df)
     df.to_csv('filedf.csv',index=None)
-    #df = pd.read_csv('filedf.csv')
+    '''
+    df = pd.read_csv('filedf.csv')
     df = df.fillna(0.0)
+    '''
     df_test = pd.DataFrame(columns=chac)
     df_test = createDataFrame('posFileTest.txt',0,df_test)
     df_test = createDataFrame('negFileTest.txt',1,df_test)
     df_test.to_csv('fileTest.csv',index=None)
+    '''
+    df_test = pd.read_csv('fileTest.csv')
     df_test.fillna(0.0)
 
     train_xy,val = train_test_split(df,test_size=0.3,random_state=1)
@@ -48,7 +53,9 @@ if __name__=='__main__':
 
     xgb_val = xgb.DMatrix(val_x,label=val_y)
     xgb_train = xgb.DMatrix(train_x,label=train_y)
-    xgb_test = xgb.DMatrix(df_test)
+    test_y = df_test.label
+    test_x = df_test.drop(['label'],axis=1)
+    xgb_test = xgb.DMatrix(test_x)
 
     params={
         'booster':'gbtree',
@@ -82,7 +89,7 @@ if __name__=='__main__':
     num_rounds = 5000 #迭代次数
     watchlist = [(xgb_train,'train'),(xgb_val,'val')]
     model = xgb.train(plst,xgb_train,num_rounds,watchlist,early_stopping_rounds=200)
-    model.save_model('xgb2.model')
+    model.save_model('xgb.model')
     print("best best_ntree_limit", model.best_ntree_limit)
     preds = model.predict(xgb_test,ntree_limit=model.best_ntree_limit)
     np.savetxt('xgb_submission.csv',np.c_[range(1,len(df_test)+1),preds],delimiter=',',header='fildId,Label',comments='',fmt='%d')
