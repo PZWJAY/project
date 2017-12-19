@@ -306,6 +306,16 @@ def saveFile(filename,src):
 			file.write(' ')
 	file.close()
 
+def cal_tf_idf(file,num,chac,word):
+	tf = []
+	for ps in file:
+		dic = {}
+		for c in ps:
+			if c in chac:
+				dic[c] = ps[c] * math.log((num / (word[c] + 1)), 2)  # 计算TF-IDF
+		tf.append(dic)
+	return tf
+
 #def Word_process(unprocess_path0,unprocess_path1):
 if __name__=="__main__":
 	stopwords = []
@@ -313,6 +323,10 @@ if __name__=="__main__":
 	word_neg = {} #统计负文本中词以及出现的次数
 	file_pos = [] #正文本特征集及权重
 	file_neg = [] #负文本特征集及权重
+	file_test_pos = []
+	file_test_neg = []
+	word_pos_test = {}
+	word_neg_test = {}
 	#读入停用词列表
 	fs = open('stopwords.txt',encoding='UTF-8')
 	line = fs.readline()
@@ -327,8 +341,35 @@ if __name__=="__main__":
 	lines = file.readlines()
 	num_pos = 0
 	num_neg = 0
+	num_test_pos = 0
+	num_test_neg = 0
+	tmp_pos_file = []
+	tmp_neg_file = []
+	tmp_pos_num = 0
+	tmp_neg_num = 0
+	tmp_word_pos = {}
+	tmp_word_neg = {}
 	for line in lines:
-		if len(file_pos) >= FILE_SIZE and len(file_neg) >= FILE_SIZE:
+		if len(tmp_pos_file) >= FILE_SIZE and len(tmp_neg_file) >= FILE_SIZE and num_pos == 0:
+			file_pos = tmp_pos_file.copy()
+			file_neg = tmp_neg_file.copy()
+			num_pos = tmp_pos_num
+			num_neg = tmp_neg_num
+			word_pos = tmp_word_pos.copy()
+			word_neg = tmp_word_neg.copy()
+			tmp_pos_file = []
+			tmp_neg_file = []
+			tmp_pos_num = 0
+			tmp_neg_num = 0
+			tmp_word_pos = {}
+			tmp_word_neg = {}
+		elif len(tmp_pos_file) >= FILE_SIZE/2 and len(tmp_neg_file) >= FILE_SIZE/2 and num_pos != 0:
+			file_test_pos = tmp_pos_file.copy()
+			file_test_neg = tmp_neg_file.copy()
+			num_test_pos = tmp_pos_num
+			num_test_neg = tmp_neg_num
+			word_pos_test = tmp_word_pos.copy()
+			word_neg_test = tmp_word_neg.copy()
 			break
 		word = {}
 		ln = set()
@@ -340,7 +381,7 @@ if __name__=="__main__":
 			for t in Seg(p):
 				if re.match(r'\xe2\x80\x8b',t[0]):
 					continue
-				if t[0] not in stopwords:
+				if t[0] not in stopwords and t[1] not in ['xu','xe']:
 					if t[0] in word:
 						word[t[0]] += 1
 					else:
@@ -349,25 +390,25 @@ if __name__=="__main__":
 						continue
 					ln.add(t[0])
 					if var[0] == '0':#positive file
-						num_pos += 1
-						if t[0] in word_pos:
-							word_pos[t[0]] += 1
+						tmp_pos_num += 1
+						if t[0] in tmp_word_pos:
+							tmp_word_pos[t[0]] += 1
 						else:
-							word_pos[t[0]] = 1
-					else:
-						num_neg += 1
-						if t[0] in word_neg:
-							word_neg[t[0]] += 1
+							tmp_word_pos[t[0]] = 1
+					else :
+						tmp_neg_num += 1
+						if t[0] in tmp_word_neg:
+							tmp_word_neg[t[0]] += 1
 						else:
-							word_neg[t[0]] = 1
+							tmp_word_neg[t[0]] = 1
 		except:
 			continue
 		for w in word:
 			word[w] = word[w] / len(word)
 		if var[0] == '0':
-			file_pos.append(word)
+			tmp_pos_file.append(word)
 		else:
-			file_neg.append(word)
+			tmp_neg_file.append(word)
 	file.close()
 	whole_file = num_pos + num_neg
 	#计算信息熵
@@ -397,24 +438,17 @@ if __name__=="__main__":
 
 	chac_set = set(chac_pos) | set(chac_neg)
 
-	tf_pos = []
-	for ps in file_pos:
-		dic = {}
-		for c in ps:
-			if c in chac_pos:
-				dic[c] = ps[c] * math.log((num_pos/(word_pos[c]+1)),2) #计算TF-IDF
-		tf_pos.append(dic)
-
-	tf_neg = []
-	for ng in file_neg:
-		dic = {}
-		for c in ng:
-			if c in chac_neg:
-				dic[c] = ng[c] * math.log((num_neg / (word_neg[c] + 1)), 2)
-		tf_neg.append(dic)
+	tf_pos = cal_tf_idf(file_pos,num_pos,chac_pos,word_pos)
+	tf_neg = cal_tf_idf(file_neg,num_neg,chac_neg,word_neg)
+	tf_pos_test = cal_tf_idf(file_test_pos,num_test_pos,chac_pos,word_pos_test)
+	tf_neg_test = cal_tf_idf(file_test_neg,num_test_neg,chac_neg,word_neg_test)
 	print(len(tf_pos))
 	print(len(tf_neg))
+	print(len(tf_pos_test))
+	print(len(tf_neg_test))
 	saveFile('posFile.txt',tf_pos)
 	saveFile('negFile.txt',tf_neg)
 	saveFile('chacSet.txt',chac_set)
+	saveFile('posFileTest.txt',tf_pos_test)
+	saveFile('negFileTest.txt',tf_neg_test)
 	#return NUM,chac_pos,chac_neg,tf_pos,tf_neg
